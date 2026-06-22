@@ -1,0 +1,50 @@
+# Customer Service Configuration
+spring:
+  application:
+    name: customer-service
+
+  datasource:
+    url: jdbc:postgresql://customer-db:5432/customer_db
+    username: customer_user
+    password: customer_pass
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      connection-timeout: 20000
+      maximum-pool-size: 10
+      minimum-idle: 2
+      idle-timeout: 300000
+      pool-name: CustomerHikariPool
+
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: false
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
+        default_schema: public
+
+  flyway:
+    enabled: false          # init-scripts klasörü ile DB ayağa kalkıyor
+
+server:
+  port: 8081
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://eureka-server:8761/eureka/
+    fetch-registry: true
+    register-with-eureka: true
+  instance:
+    prefer-ip-address: true
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+  endpoint:
+    health:
+      show-details: always

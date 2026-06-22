@@ -1,1 +1,68 @@
-aa
+
+# ============================================================
+# Networks
+# ============================================================
+networks:
+  teleco-net:
+    driver: bridge
+
+# ============================================================
+# Volumes
+# ============================================================
+volumes:
+  customer-db-data:
+    driver: local
+  customer-pgadmin-data:
+    driver: local
+
+# ============================================================
+# Services
+# ============================================================
+services:
+
+  # ----------------------------------------------------------
+  # customer-service PostgreSQL
+  # ----------------------------------------------------------
+  customer-db:
+    image: postgres:16-alpine
+    container_name: customer-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: customer_db
+      POSTGRES_USER: customer_user
+      POSTGRES_PASSWORD: customer_pass
+    ports:
+      - "5433:5432"
+    volumes:
+      - customer-db-data:/var/lib/postgresql/data
+      - ./init-scripts/customer-service:/docker-entrypoint-initdb.d:ro
+    networks:
+      - teleco-net
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U customer_user -d customer_db" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+
+  # ----------------------------------------------------------
+  # customer-service pgAdmin
+  # ----------------------------------------------------------
+  customer-pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: customer-pgadmin
+    restart: unless-stopped
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@teleco.com
+      PGADMIN_DEFAULT_PASSWORD: admin123
+      PGADMIN_CONFIG_SERVER_MODE: "False"
+      PGADMIN_CONFIG_MASTER_PASSWORD_REQUIRED: "False"
+    ports:
+      - "5050:80"
+    volumes:
+      - customer-pgadmin-data:/var/lib/pgadmin
+    networks:
+      - teleco-net
+    depends_on:
+      customer-db:
+        condition: service_healthy
