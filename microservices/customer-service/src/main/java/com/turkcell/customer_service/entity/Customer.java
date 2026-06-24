@@ -18,6 +18,9 @@ public class Customer {
     @Column(name = "id", updatable = false, nullable = false)
     private UUID id;
 
+    @Column(name = "user_id", unique = true)
+    private String userId;
+
     @Column(name = "first_name", length = 100, nullable = false)
     private String firstName;
 
@@ -29,6 +32,9 @@ public class Customer {
 
     @Column(name = "status", length = 20, nullable = false)
     private String status = "ACTIVE";
+
+    @Column(name = "is_approved", nullable = false)
+    private boolean isApproved = false;
 
     @CreationTimestamp
     @Column(name = "created_at", nullable = false, updatable = false)
@@ -64,6 +70,9 @@ public class Customer {
     public UUID getId() { return id; }
     public void setId(UUID id) { this.id = id; }
 
+    public String getUserId() { return userId; }
+    public void setUserId(String userId) { this.userId = userId; }
+
     public String getFirstName() { return firstName; }
     public void setFirstName(String firstName) { this.firstName = firstName; }
 
@@ -75,6 +84,9 @@ public class Customer {
 
     public String getStatus() { return status; }
     public void setStatus(String status) { this.status = status; }
+
+    public boolean isApproved() { return isApproved; }
+    public void setApproved(boolean approved) { isApproved = approved; }
 
     public OffsetDateTime getCreatedAt() { return createdAt; }
     public void setCreatedAt(OffsetDateTime createdAt) { this.createdAt = createdAt; }

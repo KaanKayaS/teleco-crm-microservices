@@ -10,26 +10,16 @@
         <relativePath>../pom.xml</relativePath>
     </parent>
 
-    <groupId>com.turkcell</groupId>
-    <artifactId>gateway-server</artifactId>
+    <artifactId>identity-service</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>gateway-server</name>
+    <name>identity-service</name>
+    <description>Identity Service for Telco CRM</description>
 
     <dependencies>
-        <!-- Spring Cloud Gateway (WebFlux) -->
-        <dependency>
-            <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-starter-gateway</artifactId>
-        </dependency>
-
-        <!-- Spring Security & OAuth2 Resource Server -->
+        <!-- Spring Web -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-security</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-oauth2-resource-server</artifactId>
+            <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
 
         <!-- Eureka Client -->
@@ -38,10 +28,17 @@
             <artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
         </dependency>
 
-        <!-- Config Client -->
+        <!-- Keycloak Admin Client -->
+        <dependency>
+            <groupId>org.keycloak</groupId>
+            <artifactId>keycloak-admin-client</artifactId>
+            <version>24.0.1</version>
+        </dependency>
+
+        <!-- OpenFeign -->
         <dependency>
             <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-starter-config</artifactId>
+            <artifactId>spring-cloud-starter-openfeign</artifactId>
         </dependency>
 
     </dependencies>

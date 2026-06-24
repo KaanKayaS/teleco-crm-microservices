@@ -1,0 +1,59 @@
+{
+  "realm": "telcox-realm",
+  "enabled": true,
+  "clients": [
+    {
+      "clientId": "telco-gateway-client",
+      "enabled": true,
+      "clientAuthenticatorType": "client-secret",
+      "secret": "telco-gateway-secret",
+      "bearerOnly": false,
+      "consentRequired": false,
+      "standardFlowEnabled": true,
+      "implicitFlowEnabled": false,
+      "directAccessGrantsEnabled": true,
+      "serviceAccountsEnabled": true,
+      "publicClient": false,
+      "frontchannelLogout": true,
+      "protocol": "openid-connect",
+      "attributes": {
+        "access.token.lifespan": "3600"
+      }
+    }
+  ],
+  "roles": {
+    "realm": [
+      {
+        "name": "SUBSCRIBER",
+        "description": "Subscriber Role"
+      },
+      {
+        "name": "BACKOFFICE_STAFF",
+        "description": "Backoffice Staff Role"
+      }
+    ],
+    "client": {
+      "telco-gateway-client": [
+        {
+          "name": "service-account",
+          "description": "Service Account Role"
+        }
+      ]
+    }
+  },
+  "users": [
+    {
+      "username": "admin-staff",
+      "enabled": true,
+      "email": "admin@telco.com",
+      "credentials": [
+        {
+          "type": "password",
+          "value": "password",
+          "temporary": false
+        }
+      ],
+      "realmRoles": ["BACKOFFICE_STAFF"]
+    }
+  ]
+}

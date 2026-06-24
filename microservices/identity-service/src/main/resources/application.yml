@@ -1,0 +1,19 @@
+spring:
+  application:
+    name: identity-service
+
+server:
+  port: 9001
+
+keycloak:
+  server-url: http://localhost:8080
+  realm: telcox-realm
+  client-id: telco-gateway-client
+  client-secret: telco-gateway-secret
+  admin-username: admin-staff
+  admin-password: password
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
