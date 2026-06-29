@@ -30,6 +30,12 @@ public class Customer {
     @Column(name = "identity_number", length = 20, nullable = false, unique = true)
     private String identityNumber;
 
+    @Column(name = "phone", length = 20)
+    private String phone;
+
+    @Column(name = "email", length = 150)
+    private String email;
+
     @Column(name = "status", length = 20, nullable = false)
     private String status = "ACTIVE";
 
@@ -81,6 +87,12 @@ public class Customer {
 
     public String getIdentityNumber() { return identityNumber; }
     public void setIdentityNumber(String identityNumber) { this.identityNumber = identityNumber; }
+
+    public String getPhone() { return phone; }
+    public void setPhone(String phone) { this.phone = phone; }
+
+    public String getEmail() { return email; }
+    public void setEmail(String email) { this.email = email; }
 
     public String getStatus() { return status; }
     public void setStatus(String status) { this.status = status; }
