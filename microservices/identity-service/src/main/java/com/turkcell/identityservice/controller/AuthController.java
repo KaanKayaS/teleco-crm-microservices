@@ -43,14 +43,25 @@ public class AuthController {
         return ResponseEntity.status(HttpStatus.CREATED).body(Map.of("userId", userId));
     }
 
-    @Operation(summary = "Kullanıcı Girişi (Login)", description = "Kullanıcı adı ve şifre ile giriş yapar, JWT Access Token döner.")
+    @Operation(summary = "Kullanıcı Girişi (Login)", description = "Kullanıcı adı ve şifre ile giriş yapar, JWT Access Token ve Refresh Token döner.")
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Giriş başarılı, token döndürüldü"),
+            @ApiResponse(responseCode = "200", description = "Giriş başarılı, tokenlar döndürüldü"),
             @ApiResponse(responseCode = "401", description = "Hatalı kullanıcı adı veya şifre", content = @Content)
     })
     @PostMapping("/login")
-    public ResponseEntity<Map<String, String>> login(@RequestBody LoginRequest request) {
-        Map<String, String> token = keycloakService.login(request.username(), request.password());
+    public ResponseEntity<Map<String, Object>> login(@RequestBody LoginRequest request) {
+        Map<String, Object> token = keycloakService.login(request.username(), request.password());
+        return ResponseEntity.ok(token);
+    }
+
+    @Operation(summary = "Token Yenileme (Refresh Token)", description = "Mevcut refresh token'ı kullanarak yeni bir access token ve refresh token alır.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Token başarıyla yenilendi"),
+            @ApiResponse(responseCode = "400", description = "Geçersiz refresh token veya istek", content = @Content)
+    })
+    @PostMapping("/refresh")
+    public ResponseEntity<Map<String, Object>> refresh(@RequestParam String refreshToken) {
+        Map<String, Object> token = keycloakService.refreshToken(refreshToken);
         return ResponseEntity.ok(token);
     }
 }

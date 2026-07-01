@@ -53,8 +53,8 @@ public class CustomerController {
     })
     @PostMapping
     public ResponseEntity<CustomerResponse> createCustomer(
-            @Parameter(description = "Keycloak tarafından eklenen kullanıcı ID'si (JWT sub claim)", required = true)
-            @RequestHeader("X-User-Id") String userId,
+            @Parameter(description = "Keycloak tarafından eklenen kullanıcı ID'si (JWT sub claim) - Leave empty if using Bearer token", required = false)
+            @RequestHeader(value = "X-User-Id", required = false) String userId,
             @Valid @RequestBody CreateCustomerRequest request) {
 
         if (userId == null || userId.isBlank()) {

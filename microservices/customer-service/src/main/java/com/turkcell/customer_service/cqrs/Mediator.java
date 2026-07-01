@@ -65,14 +65,18 @@ public class Mediator implements ApplicationContextAware {
      * Checks whether a handler's first generic type argument matches the given message class.
      */
     private boolean canHandle(Object handler, Class<?> handlerInterface, Class<?> messageClass) {
-        for (Type iface : handler.getClass().getGenericInterfaces()) {
-            if (iface instanceof ParameterizedType pt
-                    && pt.getRawType().equals(handlerInterface)) {
-                Type firstArg = pt.getActualTypeArguments()[0];
-                if (firstArg.equals(messageClass)) {
-                    return true;
+        Class<?> currentClass = handler.getClass();
+        while (currentClass != null && currentClass != Object.class) {
+            for (Type iface : currentClass.getGenericInterfaces()) {
+                if (iface instanceof ParameterizedType pt
+                        && pt.getRawType().equals(handlerInterface)) {
+                    Type firstArg = pt.getActualTypeArguments()[0];
+                    if (firstArg.equals(messageClass)) {
+                        return true;
+                    }
                 }
             }
+            currentClass = currentClass.getSuperclass();
         }
         return false;
     }

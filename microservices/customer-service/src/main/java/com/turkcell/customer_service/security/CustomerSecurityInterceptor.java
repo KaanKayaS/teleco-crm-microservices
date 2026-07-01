@@ -22,15 +22,14 @@ public class CustomerSecurityInterceptor implements HandlerInterceptor {
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-        if (!request.getMethod().equals("GET") || !request.getRequestURI().matches(".*/api/v1/customers/.*")) {
-            return true; // We only secure GET /api/v1/customers/{id} specifically in this interceptor
-        }
+        String uri = request.getRequestURI();
+        String method = request.getMethod();
 
         String roles = request.getHeader("X-User-Roles");
         String userId = request.getHeader("X-User-Id");
 
         if (roles == null || roles.isEmpty() || roles.contains("anonymous")) {
-            response.sendError(HttpServletResponse.SC_FORBIDDEN, "Access Denied: Anonymous users cannot access customer data");
+            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Access Denied: Unauthenticated");
             return false;
         }
 
@@ -39,21 +38,25 @@ public class CustomerSecurityInterceptor implements HandlerInterceptor {
         }
 
         if (roles.contains("ROLE_SUBSCRIBER")) {
+            if (method.equals("POST") && uri.equals("/api/v1/customers")) {
+                return true;
+            }
+
             Map<String, String> pathVariables = (Map<String, String>) request.getAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE);
             if (pathVariables != null && pathVariables.containsKey("id")) {
                 String customerIdStr = pathVariables.get("id");
                 try {
                     UUID customerId = UUID.fromString(customerIdStr);
                     Customer customer = customerRepository.findById(customerId).orElse(null);
-                    
+
                     if (customer == null) {
                         response.sendError(HttpServletResponse.SC_NOT_FOUND, "Customer not found");
                         return false;
                     }
-                    
+
                     if (userId != null && userId.equals(customer.getUserId())) {
-                        if (!customer.isApproved()) {
-                            response.sendError(HttpServletResponse.SC_FORBIDDEN, "Access Denied: Customer account is pending admin approval");
+                        if (uri.endsWith("/kyc/approve")) {
+                            response.sendError(HttpServletResponse.SC_FORBIDDEN, "Access Denied: Only staff can approve KYC");
                             return false;
                         }
                         return true;
