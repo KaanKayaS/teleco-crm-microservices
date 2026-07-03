@@ -60,8 +60,11 @@ public class KeycloakService {
                 cred.setTemporary(false);
                 keycloak.realm(realm).users().get(user.getId()).resetPassword(cred);
                 
-                // Clear required actions
+                // Clear required actions and set profile fields
                 user.setRequiredActions(Collections.emptyList());
+                user.setFirstName("Admin");
+                user.setLastName("Staff");
+                user.setEmailVerified(true);
                 keycloak.realm(realm).users().get(user.getId()).update(user);
                 
                 System.out.println("Successfully reset password and cleared required actions for admin-staff!");

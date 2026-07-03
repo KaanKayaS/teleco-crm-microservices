@@ -14,7 +14,7 @@ spring:
           password: ${GIT_TOKEN}
 
 server:
-  port: 8881                          # Config Server standart portu
+  port: 8888                          # Config Server standart portu
 
 management:
   endpoints:

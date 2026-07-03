@@ -45,11 +45,14 @@
     {
       "username": "admin-staff",
       "enabled": true,
+      "firstName": "Admin",
+      "lastName": "Staff",
       "email": "admin@telco.com",
+      "emailVerified": true,
       "credentials": [
         {
           "type": "password",
-          "value": "password",
+          "value": "admin123",
           "temporary": false
         }
       ],
