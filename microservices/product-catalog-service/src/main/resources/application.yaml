@@ -3,3 +3,5 @@ spring:
     name: product-catalog-service
   config:
     import: "optional:configserver:http://localhost:8888"
+  kafka:
+    bootstrap-servers: localhost:9094

@@ -39,6 +39,7 @@ public class AddonService {
     @Transactional
     @CacheEvict(value = "addons", allEntries = true)
     public Addon createAddon(Addon addon) {
+        addon.setId(null);
         return addonRepository.save(addon);
     }
 

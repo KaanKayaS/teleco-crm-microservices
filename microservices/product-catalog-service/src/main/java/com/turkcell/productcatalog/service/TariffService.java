@@ -41,6 +41,7 @@ public class TariffService {
     @Transactional
     @CacheEvict(value = {"tariffs", "tariff"}, allEntries = true)
     public Tariff createTariff(Tariff tariff) {
+        tariff.setId(null);
         Tariff savedTariff = tariffRepository.save(tariff);
         
         saveOutboxEvent(savedTariff, "TariffCreated");

@@ -10,9 +10,9 @@ public class ProductEventProducer {
 
     private static final Logger log = LoggerFactory.getLogger(ProductEventProducer.class);
 
-    private final KafkaTemplate<Object, Object> kafkaTemplate;
+    private final KafkaTemplate<String, String> kafkaTemplate;
 
-    public ProductEventProducer(KafkaTemplate<Object, Object> kafkaTemplate) {
+    public ProductEventProducer(KafkaTemplate<String, String> kafkaTemplate) {
         this.kafkaTemplate = kafkaTemplate;
     }
 

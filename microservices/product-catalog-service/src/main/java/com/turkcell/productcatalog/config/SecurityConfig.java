@@ -18,7 +18,7 @@ public class SecurityConfig {
         http
             .csrf(csrf -> csrf.disable())
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
+                .requestMatchers("/v3/api-docs/**", "/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
                 .requestMatchers(HttpMethod.POST, "/api/v1/tariffs/**").hasRole("BACKOFFICE_STAFF")
                 .requestMatchers(HttpMethod.POST, "/api/v1/addons/**").hasRole("BACKOFFICE_STAFF")
                 .requestMatchers(HttpMethod.PATCH, "/api/v1/tariffs/**").hasRole("BACKOFFICE_STAFF")
