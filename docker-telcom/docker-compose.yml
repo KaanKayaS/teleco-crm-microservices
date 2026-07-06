@@ -12,6 +12,8 @@ networks:
 volumes:
   customer-db-data:
     driver: local
+  product-db-data:
+    driver: local
   customer-pgadmin-data:
     driver: local
   kafka-data:
@@ -46,6 +48,48 @@ services:
       timeout: 5s
       retries: 5
       start_period: 20s
+
+  # ----------------------------------------------------------
+  # product-catalog-service PostgreSQL
+  # ----------------------------------------------------------
+  telco-product-db:
+    image: postgres:16-alpine
+    container_name: telco-product-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: product_catalog_db
+      POSTGRES_USER: product_user
+      POSTGRES_PASSWORD: product_pass
+    ports:
+      - "5434:5432"
+    volumes:
+      - product-db-data:/var/lib/postgresql/data
+    networks:
+      - teleco-net
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U product_user -d product_catalog_db" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+
+  # ----------------------------------------------------------
+  # Redis Cache for product-catalog-service
+  # ----------------------------------------------------------
+  redis:
+    image: redis:7-alpine
+    container_name: redis-cache
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    networks:
+      - teleco-net
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
 
   # ----------------------------------------------------------
   # customer-service pgAdmin

@@ -1,1 +1,4 @@
+com\turkcell\gatewayserver\config\SecurityConfig$KeycloakRoleConverter.class
+com\turkcell\gatewayserver\config\SecurityConfig.class
+com\turkcell\gatewayserver\filter\TokenRelayGlobalFilter.class
 com\turkcell\gatewayserver\GatewayServerApplication.class
