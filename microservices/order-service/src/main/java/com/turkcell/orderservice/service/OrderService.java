@@ -22,6 +22,9 @@ public class OrderService {
     @Transactional
     public Order createOrder(Order order) {
         order.setStatus("PENDING");
+        if (order.getItems() != null) {
+            order.getItems().forEach(item -> item.setOrder(order));
+        }
         Order savedOrder = orderRepository.save(order);
         sagaOrchestrator.startSaga(savedOrder);
         return savedOrder;
