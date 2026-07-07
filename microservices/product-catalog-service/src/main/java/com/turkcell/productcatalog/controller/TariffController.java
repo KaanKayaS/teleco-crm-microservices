@@ -39,8 +39,8 @@ public class TariffController {
     }
 
     @PatchMapping("/{code}/price")
-    public ResponseEntity<Tariff> updateTariffPrice(@PathVariable String code, @RequestBody Map<String, BigDecimal> payload) {
-        BigDecimal newPrice = payload.get("price");
+    public ResponseEntity<Tariff> updateTariffPrice(@PathVariable String code, @RequestBody com.turkcell.productcatalog.model.dto.UpdatePriceRequest payload) {
+        BigDecimal newPrice = payload.getPrice();
         if (newPrice == null) {
             return ResponseEntity.badRequest().build();
         }

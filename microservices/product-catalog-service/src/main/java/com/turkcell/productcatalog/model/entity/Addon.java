@@ -14,6 +14,7 @@ public class Addon {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
+    @com.fasterxml.jackson.annotation.JsonProperty(access = com.fasterxml.jackson.annotation.JsonProperty.Access.READ_ONLY)
     private UUID id;
 
     @Column(length = 50, unique = true, nullable = false)
