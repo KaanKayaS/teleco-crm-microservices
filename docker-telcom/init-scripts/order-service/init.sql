@@ -1,6 +1,4 @@
-CREATE DATABASE order_db;
 
-\c order_db;
 
 CREATE TABLE IF NOT EXISTS orders (
     id UUID PRIMARY KEY,
