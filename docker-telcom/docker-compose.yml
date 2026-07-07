@@ -14,6 +14,8 @@ volumes:
     driver: local
   product-db-data:
     driver: local
+  order-db-data:
+    driver: local
   customer-pgadmin-data:
     driver: local
   kafka-data:
@@ -68,6 +70,31 @@ services:
       - teleco-net
     healthcheck:
       test: [ "CMD-SHELL", "pg_isready -U product_user -d product_catalog_db" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+
+  # ----------------------------------------------------------
+  # order-service PostgreSQL
+  # ----------------------------------------------------------
+  telco-order-db:
+    image: postgres:16-alpine
+    container_name: telco-order-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: order_db
+      POSTGRES_USER: order_user
+      POSTGRES_PASSWORD: order_pass
+    ports:
+      - "5435:5432"
+    volumes:
+      - order-db-data:/var/lib/postgresql/data
+      - ./init-scripts/order-service:/docker-entrypoint-initdb.d:ro
+    networks:
+      - teleco-net
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U order_user -d order_db" ]
       interval: 10s
       timeout: 5s
       retries: 5
