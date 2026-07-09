@@ -25,6 +25,7 @@
         <module>customer-service</module>
         <module>product-catalog-service</module>
         <module>order-service</module>
+        <module>subscription-service</module>
     </modules>
 
     <properties>

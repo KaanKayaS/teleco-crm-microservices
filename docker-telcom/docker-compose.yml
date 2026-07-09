@@ -16,6 +16,8 @@ volumes:
     driver: local
   order-db-data:
     driver: local
+  subscription-db-data:
+    driver: local
   customer-pgadmin-data:
     driver: local
   kafka-data:
@@ -189,3 +191,27 @@ services:
     networks:
       - teleco-net
 
+  # ----------------------------------------------------------
+  # subscription-service PostgreSQL
+  # ----------------------------------------------------------
+  subscription-db:
+    image: postgres:16-alpine
+    container_name: subscription-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: subscription_db
+      POSTGRES_USER: subscription_user
+      POSTGRES_PASSWORD: subscription_pass
+    ports:
+      - "5436:5432"
+    volumes:
+      - subscription-db-data:/var/lib/postgresql/data
+      - ./init-scripts/subscription-service:/docker-entrypoint-initdb.d:ro
+    networks:
+      - teleco-net
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U subscription_user -d subscription_db" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 20s

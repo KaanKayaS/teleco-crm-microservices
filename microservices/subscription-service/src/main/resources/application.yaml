@@ -1,16 +1,16 @@
 spring:
   application:
-    name: order-service
+    name: subscription-service
   config:
     import: "optional:configserver:http://localhost:8888"
 
   # -------------------------------------------------------
-  # DataSource — telco-order-db (Docker port 5435)
+  # DataSource — subscription-db (Docker port 5436)
   # -------------------------------------------------------
   datasource:
-    url: jdbc:postgresql://localhost:5435/order_db
-    username: order_user
-    password: order_pass
+    url: jdbc:postgresql://localhost:5436/subscription_db
+    username: subscription_user
+    password: subscription_pass
     driver-class-name: org.postgresql.Driver
 
   # -------------------------------------------------------
@@ -22,8 +22,8 @@ spring:
     show-sql: true
     properties:
       hibernate:
-        format_sql: true
         dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
 
   # -------------------------------------------------------
   # Kafka
@@ -32,9 +32,9 @@ spring:
     bootstrap-servers: localhost:9094
     producer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
-      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
     consumer:
-      group-id: order-service-group
+      group-id: subscription-service-group
       auto-offset-reset: earliest
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
       value-deserializer: org.springframework.kafka.support.serializer.ErrorHandlingDeserializer
@@ -55,14 +55,14 @@ spring:
 # Server
 # -------------------------------------------------------
 server:
-  port: 8085
+  port: 8086
 
 # -------------------------------------------------------
 # Eureka
 # -------------------------------------------------------
 eureka:
   client:
-    enabled: false
+    enabled: false          # Config Server / Eureka çalışmıyorsa skip
     service-url:
       defaultZone: http://localhost:8761/eureka/
     fetch-registry: true
