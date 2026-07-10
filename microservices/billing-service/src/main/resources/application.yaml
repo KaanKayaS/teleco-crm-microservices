@@ -1,16 +1,16 @@
 spring:
   application:
-    name: subscription-service
+    name: billing-service
   config:
     import: "optional:configserver:http://localhost:8888"
 
   # -------------------------------------------------------
-  # DataSource — subscription-db (Docker port 5436)
+  # DataSource — billing-db (Docker port 5438)
   # -------------------------------------------------------
   datasource:
-    url: jdbc:postgresql://localhost:5436/subscription_db
-    username: subscription_user
-    password: subscription_pass
+    url: jdbc:postgresql://localhost:5438/billing_db
+    username: billing_user
+    password: billing_pass
     driver-class-name: org.postgresql.Driver
 
   # -------------------------------------------------------
@@ -18,7 +18,7 @@ spring:
   # -------------------------------------------------------
   jpa:
     hibernate:
-      ddl-auto: validate
+      ddl-auto: update
     show-sql: true
     properties:
       hibernate:
@@ -34,13 +34,10 @@ spring:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.apache.kafka.common.serialization.StringSerializer
     consumer:
-      group-id: subscription-service-group
+      group-id: billing-service-group
       auto-offset-reset: earliest
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
-      value-deserializer: org.springframework.kafka.support.serializer.ErrorHandlingDeserializer
-      properties:
-        spring.deserializer.value.delegate.class: org.springframework.kafka.support.serializer.JsonDeserializer
-        spring.json.trusted.packages: "*"
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
 
   # -------------------------------------------------------
   # OAuth2 Resource Server — Keycloak
@@ -55,7 +52,7 @@ spring:
 # Server
 # -------------------------------------------------------
 server:
-  port: 8086
+  port: 8087
 
 # -------------------------------------------------------
 # Eureka

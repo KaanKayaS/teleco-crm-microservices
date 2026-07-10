@@ -47,6 +47,7 @@ public class Tariff {
     @Column(name = "effective_to")
     private LocalDate effectiveTo;
 
+    @com.fasterxml.jackson.annotation.JsonIgnore
     @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinTable(
         name = "tariff_addons",

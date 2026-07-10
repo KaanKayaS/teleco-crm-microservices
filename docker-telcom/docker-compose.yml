@@ -24,6 +24,8 @@ volumes:
     driver: local
   usage-db-data:
     driver: local
+  billing-db-data:
+    driver: local
 
 # ============================================================
 # Services
@@ -237,6 +239,30 @@ services:
       - teleco-net
     healthcheck:
       test: [ "CMD-SHELL", "pg_isready -U usage_user -d usage_db" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+
+  # ----------------------------------------------------------
+  # billing-service PostgreSQL
+  # ----------------------------------------------------------
+  billing-db:
+    image: postgres:16-alpine
+    container_name: billing-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: billing_db
+      POSTGRES_USER: billing_user
+      POSTGRES_PASSWORD: billing_pass
+    ports:
+      - "5438:5432"
+    volumes:
+      - billing-db-data:/var/lib/postgresql/data
+    networks:
+      - teleco-net
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U billing_user -d billing_db" ]
       interval: 10s
       timeout: 5s
       retries: 5
