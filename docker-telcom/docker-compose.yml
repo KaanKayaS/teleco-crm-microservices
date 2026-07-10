@@ -22,6 +22,8 @@ volumes:
     driver: local
   kafka-data:
     driver: local
+  usage-db-data:
+    driver: local
 
 # ============================================================
 # Services
@@ -211,6 +213,30 @@ services:
       - teleco-net
     healthcheck:
       test: [ "CMD-SHELL", "pg_isready -U subscription_user -d subscription_db" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+
+  # ----------------------------------------------------------
+  # usage-service PostgreSQL
+  # ----------------------------------------------------------
+  usage-db:
+    image: postgres:16-alpine
+    container_name: usage-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: usage_db
+      POSTGRES_USER: usage_user
+      POSTGRES_PASSWORD: usage_pass
+    ports:
+      - "5437:5432"
+    volumes:
+      - usage-db-data:/var/lib/postgresql/data
+    networks:
+      - teleco-net
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U usage_user -d usage_db" ]
       interval: 10s
       timeout: 5s
       retries: 5
