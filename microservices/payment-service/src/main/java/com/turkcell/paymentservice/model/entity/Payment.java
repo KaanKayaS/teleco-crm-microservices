@@ -23,6 +23,9 @@ public class Payment {
     @Column(name = "invoice_id", nullable = false)
     private String invoiceId;
 
+    @Column(name = "customer_id")
+    private String customerId;
+
     @Column(name = "amount", nullable = false)
     private BigDecimal amount;
 

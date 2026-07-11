@@ -28,6 +28,8 @@ volumes:
     driver: local
   payment-db-data:
     driver: local
+  notification-db-data:
+    driver: local
 
 # ============================================================
 # Services
@@ -290,6 +292,31 @@ services:
       - teleco-net
     healthcheck:
       test: [ "CMD-SHELL", "pg_isready -U payment_user -d payment_db" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+
+  # ----------------------------------------------------------
+  # notification-service PostgreSQL
+  # ----------------------------------------------------------
+  notification-db:
+    image: postgres:16-alpine
+    container_name: notification-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: notification_db
+      POSTGRES_USER: notification_user
+      POSTGRES_PASSWORD: notification_pass
+    ports:
+      - "5440:5432"
+    volumes:
+      - notification-db-data:/var/lib/postgresql/data
+      - ./init-scripts/notification-service:/docker-entrypoint-initdb.d:ro
+    networks:
+      - teleco-net
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U notification_user -d notification_db" ]
       interval: 10s
       timeout: 5s
       retries: 5

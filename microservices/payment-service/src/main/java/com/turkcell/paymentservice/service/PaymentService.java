@@ -42,6 +42,7 @@ public class PaymentService {
 
         Payment payment = Payment.builder()
                 .invoiceId(request.getInvoiceId())
+                .customerId(request.getCustomerId())
                 .amount(request.getAmount())
                 .method(request.getMethod())
                 .status(PaymentStatus.PENDING)
@@ -71,10 +72,10 @@ public class PaymentService {
             payment.setStatus(PaymentStatus.SUCCESS);
             payment.setExternalRef(UUID.randomUUID().toString());
             payment.setPaidAt(LocalDateTime.now());
-            kafkaProducer.publishPaymentCompletedEvent(payment.getId(), payment.getInvoiceId());
+            kafkaProducer.publishPaymentCompletedEvent(payment.getId(), payment.getInvoiceId(), payment.getCustomerId());
         } else {
             payment.setStatus(PaymentStatus.FAILED);
-            kafkaProducer.publishPaymentFailedEvent(payment.getId(), payment.getInvoiceId(), "PSP_DECLINED");
+            kafkaProducer.publishPaymentFailedEvent(payment.getId(), payment.getInvoiceId(), payment.getCustomerId(), "PSP_DECLINED");
         }
 
         paymentRepository.save(payment);
@@ -91,7 +92,7 @@ public class PaymentService {
         if (payment.getStatus() == PaymentStatus.SUCCESS) {
             payment.setStatus(PaymentStatus.REFUNDED);
             paymentRepository.save(payment);
-            kafkaProducer.publishPaymentRefundedEvent(payment.getId(), payment.getInvoiceId());
+            kafkaProducer.publishPaymentRefundedEvent(payment.getId(), payment.getInvoiceId(), payment.getCustomerId());
         }
         return mapToResponse(payment);
     }
