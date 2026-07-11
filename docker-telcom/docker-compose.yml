@@ -26,6 +26,8 @@ volumes:
     driver: local
   billing-db-data:
     driver: local
+  payment-db-data:
+    driver: local
 
 # ============================================================
 # Services
@@ -263,6 +265,31 @@ services:
       - teleco-net
     healthcheck:
       test: [ "CMD-SHELL", "pg_isready -U billing_user -d billing_db" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+
+  # ----------------------------------------------------------
+  # payment-service PostgreSQL
+  # ----------------------------------------------------------
+  payment-db:
+    image: postgres:16-alpine
+    container_name: payment-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: payment_db
+      POSTGRES_USER: payment_user
+      POSTGRES_PASSWORD: payment_pass
+    ports:
+      - "5439:5432"
+    volumes:
+      - payment-db-data:/var/lib/postgresql/data
+      - ./init-scripts/payment-service:/docker-entrypoint-initdb.d:ro
+    networks:
+      - teleco-net
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U payment_user -d payment_db" ]
       interval: 10s
       timeout: 5s
       retries: 5

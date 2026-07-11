@@ -22,11 +22,16 @@ public class OrderEventProducer {
     public void publishOrderCreated(Order order) {
         try {
             Map<String, Object> event = new HashMap<>();
+            event.put("eventType", "OrderConfirmed");
             event.put("orderId", order.getId().toString());
             event.put("customerId", order.getCustomerId());
             event.put("totalAmount", order.getTotalAmount());
             event.put("currency", order.getCurrency());
             
+            if (order.getItems() != null && !order.getItems().isEmpty()) {
+                event.put("tariffCode", order.getItems().get(0).getProductCode());
+            }
+
             kafkaTemplate.send("order-events", order.getId().toString(), objectMapper.writeValueAsString(event));
         } catch (Exception e) {
             throw new RuntimeException("Error serializing order event", e);
