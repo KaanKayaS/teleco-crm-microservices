@@ -4,6 +4,8 @@ server:
 
 eureka:
   instance:
+    prefer-ip-address: true
+  instance:
     hostname: localhost
   client:
     register-with-eureka: false
@@ -22,3 +24,4 @@ management:
   endpoint:
     health:
       show-details: always
+

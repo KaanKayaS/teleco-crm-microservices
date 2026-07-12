@@ -1,0 +1,72 @@
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+  <div class="md:flex md:items-center md:justify-between mb-6">
+    <div class="flex-1 min-w-0">
+      <h2 class="text-2xl font-bold leading-7 text-gray-900 sm:text-3xl sm:truncate">
+        Product Catalog
+      </h2>
+    </div>
+  </div>
+
+  <div *ngIf="loading" class="flex justify-center mt-8">
+    <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+  </div>
+
+  <div *ngIf="!loading" class="space-y-12">
+    <!-- Tariffs Section -->
+    <div>
+      <h3 class="text-xl font-bold text-gray-900 mb-4 border-b pb-2">Tariffs</h3>
+      <div class="grid grid-cols-1 gap-y-10 sm:grid-cols-2 gap-x-6 lg:grid-cols-3 xl:gap-x-8">
+        <div *ngFor="let tariff of tariffs" class="group relative bg-white border rounded-lg shadow-sm flex flex-col p-6 hover:shadow-lg transition-shadow">
+          <div class="flex-1">
+            <h3 class="text-lg font-medium text-gray-900">
+              {{ tariff.name }}
+            </h3>
+            <p class="mt-2 text-sm text-gray-500">
+              {{ tariff.description }}
+            </p>
+            <div class="mt-4 text-blue-600 font-bold">
+              {{ tariff.price }} ₺ / {{ tariff.validityDays }} Days
+            </div>
+            <ul class="mt-4 text-sm text-gray-600 space-y-2">
+              <li class="flex items-center"><span class="mr-2 text-green-500">✓</span> {{ tariff.dataMb }} MB Data</li>
+              <li class="flex items-center"><span class="mr-2 text-green-500">✓</span> {{ tariff.minutes }} Minutes</li>
+              <li class="flex items-center"><span class="mr-2 text-green-500">✓</span> {{ tariff.sms }} SMS</li>
+            </ul>
+          </div>
+          <div class="mt-6">
+            <button (click)="buyItem(tariff, 'TARIFF')" class="w-full flex justify-center items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700">
+              Select Plan
+            </button>
+          </div>
+        </div>
+      </div>
+      <div *ngIf="tariffs.length === 0" class="text-gray-500 italic">No tariffs available.</div>
+    </div>
+
+    <!-- Addons Section -->
+    <div>
+      <h3 class="text-xl font-bold text-gray-900 mb-4 border-b pb-2">Addons</h3>
+      <div class="grid grid-cols-1 gap-y-10 sm:grid-cols-2 gap-x-6 lg:grid-cols-4 xl:gap-x-8">
+        <div *ngFor="let addon of addons" class="group relative bg-white border rounded-lg shadow-sm flex flex-col p-6 hover:shadow-lg transition-shadow">
+          <div class="flex-1">
+            <h3 class="text-lg font-medium text-gray-900">
+              {{ addon.name }}
+            </h3>
+            <div class="mt-2 text-blue-600 font-bold">
+              {{ addon.price }} ₺
+            </div>
+            <p class="mt-2 text-sm text-gray-500">
+              +{{ addon.dataMb }} MB, +{{ addon.minutes }} Min, +{{ addon.sms }} SMS
+            </p>
+          </div>
+          <div class="mt-6">
+            <button (click)="buyItem(addon, 'ADDON')" class="w-full flex justify-center items-center px-4 py-2 border border-blue-600 rounded-md shadow-sm text-sm font-medium text-blue-600 bg-white hover:bg-blue-50">
+              Add to Plan
+            </button>
+          </div>
+        </div>
+      </div>
+      <div *ngIf="addons.length === 0" class="text-gray-500 italic">No addons available.</div>
+    </div>
+  </div>
+</div>

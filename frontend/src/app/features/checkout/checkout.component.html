@@ -1,0 +1,60 @@
+<div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+  <div class="md:flex md:items-center md:justify-between mb-6">
+    <div class="flex-1 min-w-0">
+      <h2 class="text-2xl font-bold leading-7 text-gray-900 sm:text-3xl sm:truncate">
+        Checkout
+      </h2>
+    </div>
+  </div>
+
+  <div *ngIf="successMessage" class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-4">
+    {{ successMessage }}
+  </div>
+
+  <div class="bg-white shadow overflow-hidden sm:rounded-lg">
+    <div class="px-4 py-5 sm:p-6">
+      <form [formGroup]="checkoutForm" (ngSubmit)="onSubmit()" class="space-y-6">
+        
+        <!-- Order Info (Mock) -->
+        <div>
+          <h3 class="text-lg leading-6 font-medium text-gray-900">Order Details (Mock)</h3>
+          <div class="mt-4 grid grid-cols-1 gap-y-6 sm:grid-cols-2 sm:gap-x-4">
+            <div>
+              <label class="block text-sm font-medium text-gray-700">Product ID</label>
+              <input type="text" formControlName="productId" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700">Total Amount (₺)</label>
+              <input type="number" formControlName="totalAmount" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+            </div>
+          </div>
+        </div>
+
+        <!-- Payment Info -->
+        <div class="pt-6 border-t border-gray-200">
+          <h3 class="text-lg leading-6 font-medium text-gray-900">Payment Information</h3>
+          <div class="mt-4 grid grid-cols-1 gap-y-6 sm:grid-cols-3 sm:gap-x-4">
+            <div class="sm:col-span-3">
+              <label class="block text-sm font-medium text-gray-700">Card Number</label>
+              <input type="text" formControlName="cardNumber" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700">Expiry (MM/YY)</label>
+              <input type="text" formControlName="expiry" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700">CVV</label>
+              <input type="text" formControlName="cvv" class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+            </div>
+          </div>
+        </div>
+
+        <div class="pt-5 border-t border-gray-200 flex justify-end">
+          <button type="submit" [disabled]="!checkoutForm.valid || loading" class="ml-3 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:bg-gray-400">
+            <span *ngIf="loading" class="mr-2">...</span> Confirm & Pay
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

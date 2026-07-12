@@ -32,6 +32,8 @@ spring:
           issuer-uri: ${KEYCLOAK_ISSUER_URI:http://localhost:8080/realms/telcox-realm}
 
 eureka:
+  instance:
+    prefer-ip-address: true
   client:
     serviceUrl:
       defaultZone: ${EUREKA_URI:http://localhost:8761/eureka}
@@ -39,3 +41,4 @@ eureka:
 logging:
   level:
     com.turkcell.notificationservice: DEBUG
+

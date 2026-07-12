@@ -1,0 +1,131 @@
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+  <div class="md:flex md:items-center md:justify-between mb-6">
+    <div class="flex-1 min-w-0">
+      <h2 class="text-2xl font-bold leading-7 text-gray-900 sm:text-3xl sm:truncate">
+        Dashboard Overview
+      </h2>
+    </div>
+  </div>
+
+  <div *ngIf="loading" class="flex justify-center mt-8">
+    <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+  </div>
+
+  <div *ngIf="error" class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative">
+    {{ error }}
+  </div>
+
+  <div *ngIf="!loading && data" class="space-y-6">
+    <!-- Customer Info Card -->
+    <div class="bg-white shadow overflow-hidden sm:rounded-lg">
+      <div class="px-4 py-5 sm:px-6 flex justify-between items-center">
+        <div>
+          <h3 class="text-lg leading-6 font-medium text-gray-900">Customer Profile</h3>
+          <p class="mt-1 max-w-2xl text-sm text-gray-500">Personal details and status.</p>
+        </div>
+      </div>
+      <div class="border-t border-gray-200 px-4 py-5 sm:px-6">
+        <dl class="grid grid-cols-1 gap-x-4 gap-y-8 sm:grid-cols-2">
+          <div class="sm:col-span-1">
+            <dt class="text-sm font-medium text-gray-500">Full name</dt>
+            <dd class="mt-1 text-sm text-gray-900">{{ data.customer?.firstName }} {{ data.customer?.lastName }}</dd>
+          </div>
+          <div class="sm:col-span-1">
+            <dt class="text-sm font-medium text-gray-500">Email address</dt>
+            <dd class="mt-1 text-sm text-gray-900">{{ data.customer?.email }}</dd>
+          </div>
+          <div class="sm:col-span-1">
+            <dt class="text-sm font-medium text-gray-500">Status</dt>
+            <dd class="mt-1 text-sm text-gray-900">
+              <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                {{ data.customer?.status }}
+              </span>
+            </dd>
+          </div>
+        </dl>
+      </div>
+    </div>
+
+    <!-- Active Subscription -->
+    <div *ngIf="data.subscription" class="bg-white shadow overflow-hidden sm:rounded-lg">
+      <div class="px-4 py-5 sm:px-6">
+        <h3 class="text-lg leading-6 font-medium text-gray-900">Active Subscription</h3>
+        <p class="mt-1 max-w-2xl text-sm text-gray-500">Current plan and phone number.</p>
+      </div>
+      <div class="border-t border-gray-200 px-4 py-5 sm:px-6">
+        <dl class="grid grid-cols-1 gap-x-4 gap-y-8 sm:grid-cols-2">
+          <div class="sm:col-span-1">
+            <dt class="text-sm font-medium text-gray-500">MSISDN (Phone)</dt>
+            <dd class="mt-1 text-sm font-bold text-gray-900">{{ data.subscription?.msisdn }}</dd>
+          </div>
+          <div class="sm:col-span-1">
+            <dt class="text-sm font-medium text-gray-500">Tariff</dt>
+            <dd class="mt-1 text-sm text-gray-900">{{ data.subscription?.tariffCode }}</dd>
+          </div>
+          <div class="sm:col-span-1">
+            <dt class="text-sm font-medium text-gray-500">Activation Date</dt>
+            <dd class="mt-1 text-sm text-gray-900">{{ data.subscription?.activationDate }}</dd>
+          </div>
+        </dl>
+      </div>
+    </div>
+    
+    <div *ngIf="!data.subscription && !data.error" class="bg-yellow-50 border-l-4 border-yellow-400 p-4">
+      <div class="flex">
+        <div class="ml-3">
+          <p class="text-sm text-yellow-700">
+            You don't have an active subscription. <a routerLink="/catalog" class="font-medium underline text-yellow-700 hover:text-yellow-600">Browse Tariffs</a>
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Usage -->
+    <div *ngIf="data.usage && !data.usage.error" class="bg-white shadow overflow-hidden sm:rounded-lg">
+      <div class="px-4 py-5 sm:px-6">
+        <h3 class="text-lg leading-6 font-medium text-gray-900">Current Usage</h3>
+      </div>
+      <div class="border-t border-gray-200 p-4 flex gap-4">
+         <div class="flex-1 bg-gray-50 rounded p-4 text-center">
+            <span class="block text-sm text-gray-500 font-bold mb-1">Data (MB)</span>
+            <span class="text-2xl text-blue-600 font-bold">{{ data.usage?.dataMbUsed || 0 }} / {{ data.usage?.dataMbIncluded || 0 }}</span>
+         </div>
+         <div class="flex-1 bg-gray-50 rounded p-4 text-center">
+            <span class="block text-sm text-gray-500 font-bold mb-1">Minutes</span>
+            <span class="text-2xl text-green-600 font-bold">{{ data.usage?.minutesUsed || 0 }} / {{ data.usage?.minutesIncluded || 0 }}</span>
+         </div>
+         <div class="flex-1 bg-gray-50 rounded p-4 text-center">
+            <span class="block text-sm text-gray-500 font-bold mb-1">SMS</span>
+            <span class="text-2xl text-purple-600 font-bold">{{ data.usage?.smsUsed || 0 }} / {{ data.usage?.smsIncluded || 0 }}</span>
+         </div>
+      </div>
+    </div>
+
+    <!-- Invoices -->
+    <div class="bg-white shadow overflow-hidden sm:rounded-lg">
+      <div class="px-4 py-5 sm:px-6">
+        <h3 class="text-lg leading-6 font-medium text-gray-900">Recent Invoices</h3>
+      </div>
+      <div class="border-t border-gray-200">
+        <ul role="list" class="divide-y divide-gray-200">
+          <li *ngIf="data.recentInvoices?.length === 0" class="px-4 py-4 sm:px-6 text-gray-500 italic">
+            No invoices found.
+          </li>
+          <li *ngFor="let invoice of data.recentInvoices" class="px-4 py-4 sm:px-6 flex items-center justify-between">
+            <div class="flex flex-col">
+              <span class="font-bold text-gray-900">{{ invoice.totalAmount }} ₺</span>
+              <span class="text-sm text-gray-500">{{ invoice.periodMonth }}/{{ invoice.periodYear }}</span>
+            </div>
+            <div>
+              <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full"
+                    [ngClass]="invoice.status === 'PAID' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'">
+                {{ invoice.status }}
+              </span>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </div>
+    
+  </div>
+</div>
