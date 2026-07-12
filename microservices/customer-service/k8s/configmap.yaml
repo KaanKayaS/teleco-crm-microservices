@@ -1,0 +1,41 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: customer-service-config
+  namespace: telecom-crm
+  labels:
+    app.kubernetes.io/name: customer-service
+    app.kubernetes.io/component: config
+    app.kubernetes.io/part-of: telecom-crm
+data:
+  # -------------------------------------------------------
+  # Spring Profile
+  # -------------------------------------------------------
+  SPRING_PROFILES_ACTIVE: "k8s"
+
+  # -------------------------------------------------------
+  # DataSource
+  # -------------------------------------------------------
+  DB_HOST: "customer-db"
+  DB_PORT: "5432"
+  DB_NAME: "customer_db"
+
+  # -------------------------------------------------------
+  # Eureka
+  # -------------------------------------------------------
+  EUREKA_URL: "http://eureka-server:8761/eureka/"
+
+  # -------------------------------------------------------
+  # Kafka
+  # -------------------------------------------------------
+  KAFKA_BOOTSTRAP_SERVERS: "kafka:9092"
+
+  # -------------------------------------------------------
+  # Server
+  # -------------------------------------------------------
+  SERVER_PORT: "8081"
+
+  # -------------------------------------------------------
+  # JVM
+  # -------------------------------------------------------
+  JAVA_OPTS: "-XX:+UseContainerSupport -XX:MaxRAMPercentage=75.0 -XX:InitialRAMPercentage=50.0"

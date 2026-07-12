@@ -1,0 +1,39 @@
+# Build artifacts
+target/
+!target/*.jar
+
+# Version control
+.git
+.gitignore
+.gitattributes
+
+# IDE files
+.idea/
+*.iml
+.vscode/
+*.swp
+*.swo
+
+# Documentation
+*.md
+LICENSE
+
+# Docker & K8s
+Dockerfile
+docker-compose*.yml
+k8s/
+.dockerignore
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Maven wrapper jar (we use the script directly)
+.mvn/wrapper/maven-wrapper.jar
+
+# Uploads directory (runtime data, not build artifact)
+uploads/
+
+# Logs
+*.log
+logs/

@@ -1,0 +1,70 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: customer-db-init
+  namespace: telecom-crm
+data:
+  init.sql: |
+    -- Customer DB init script (schema will be managed by JPA/Hibernate)
+    SELECT 1;
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: customer-db
+  namespace: telecom-crm
+  labels:
+    app.kubernetes.io/name: customer-db
+    app.kubernetes.io/component: database
+    app.kubernetes.io/part-of: telecom-crm
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: customer-db
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: customer-db
+    spec:
+      containers:
+        - name: postgres
+          image: postgres:16-alpine
+          ports:
+            - containerPort: 5432
+          env:
+            - name: POSTGRES_DB
+              value: customer_db
+            - name: POSTGRES_USER
+              value: customer_user
+            - name: POSTGRES_PASSWORD
+              value: customer_pass
+          volumeMounts:
+            - name: init-scripts
+              mountPath: /docker-entrypoint-initdb.d
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+            limits:
+              cpu: 250m
+              memory: 256Mi
+      volumes:
+        - name: init-scripts
+          configMap:
+            name: customer-db-init
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: customer-db
+  namespace: telecom-crm
+  labels:
+    app.kubernetes.io/name: customer-db
+spec:
+  type: ClusterIP
+  selector:
+    app.kubernetes.io/name: customer-db
+  ports:
+    - port: 5432
+      targetPort: 5432
