@@ -30,6 +30,8 @@ volumes:
     driver: local
   notification-db-data:
     driver: local
+  ticket-db-data:
+    driver: local
 
 # ============================================================
 # Services
@@ -317,6 +319,31 @@ services:
       - teleco-net
     healthcheck:
       test: [ "CMD-SHELL", "pg_isready -U notification_user -d notification_db" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+
+  # ----------------------------------------------------------
+  # ticket-service PostgreSQL
+  # ----------------------------------------------------------
+  ticket-db:
+    image: postgres:16-alpine
+    container_name: ticket-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ticket_db
+      POSTGRES_USER: ticket_user
+      POSTGRES_PASSWORD: ticket_pass
+    ports:
+      - "5441:5432"
+    volumes:
+      - ticket-db-data:/var/lib/postgresql/data
+      - ./init-scripts/ticket-service:/docker-entrypoint-initdb.d:ro
+    networks:
+      - teleco-net
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U ticket_user -d ticket_db" ]
       interval: 10s
       timeout: 5s
       retries: 5

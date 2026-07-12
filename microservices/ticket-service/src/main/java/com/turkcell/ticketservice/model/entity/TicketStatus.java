@@ -1,0 +1,8 @@
+package com.turkcell.ticketservice.model.entity;
+
+public enum TicketStatus {
+    OPEN,
+    IN_PROGRESS,
+    RESOLVED,
+    CLOSED
+}

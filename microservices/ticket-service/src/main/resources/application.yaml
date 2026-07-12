@@ -1,0 +1,82 @@
+spring:
+  application:
+    name: ticket-service
+  config:
+    import: "optional:configserver:http://localhost:8888"
+
+  # -------------------------------------------------------
+  # DataSource — ticket-db (Docker port 5441)
+  # -------------------------------------------------------
+  datasource:
+    url: jdbc:postgresql://localhost:5441/ticket_db
+    username: ticket_user
+    password: ticket_pass
+    driver-class-name: org.postgresql.Driver
+
+  # -------------------------------------------------------
+  # JPA / Hibernate
+  # -------------------------------------------------------
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
+
+  # -------------------------------------------------------
+  # Kafka
+  # -------------------------------------------------------
+  kafka:
+    bootstrap-servers: localhost:9094
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+    consumer:
+      group-id: ticket-service-group
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+
+  # -------------------------------------------------------
+  # OAuth2 Resource Server — Keycloak
+  # -------------------------------------------------------
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:8080/realms/telcox-realm
+
+# -------------------------------------------------------
+# Server
+# -------------------------------------------------------
+server:
+  port: 9010
+
+# -------------------------------------------------------
+# Eureka
+# -------------------------------------------------------
+eureka:
+  client:
+    enabled: false          # Disable if running without Eureka/Config server
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+    fetch-registry: true
+    register-with-eureka: true
+  instance:
+    prefer-ip-address: true
+
+# -------------------------------------------------------
+# Springdoc / Swagger UI
+# -------------------------------------------------------
+springdoc:
+  api-docs:
+    path: /api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+    operations-sorter: method
+    tags-sorter: alpha
+    try-it-out-enabled: true
+  default-consumes-media-type: application/json
+  default-produces-media-type: application/json
