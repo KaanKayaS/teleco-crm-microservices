@@ -61,7 +61,7 @@ spec:
 
       containers:
         - name: customer-service
-          image: customer-service:latest
+          image: telecom-crm/customer-service:latest
           imagePullPolicy: Never
           ports:
             - name: http
