@@ -42,7 +42,7 @@ spring:
           jwk-set-uri: http://localhost:8080/realms/telcox-realm/protocol/openid-connect/certs
 
 server:
-  port: 8087
+  port: 9006
 
 springdoc:
   api-docs:
