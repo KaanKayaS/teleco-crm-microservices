@@ -43,7 +43,7 @@ Sistemimiz bağımsız olarak ölçeklenebilen, iş ve altyapı sorumlulukların
 ### Geliştirici Araçları (Developer Tools)
 | Servis Adı | Port | Görevi |
 | :--- | :---: | :--- |
-| **pgAdmin** | `5050` | Veritabanlarını tarayıcı üzerinden (UI) yönetmek ve sorgulamak için kullanılan yönetim aracı. (Giriş: `admin@teleco.com` / `admin123`) |
+| **pgAdmin** | `5050` | Veritabanlarını tarayıcı üzerinden (UI) yönetmek ve sorgulamak için kullanılan yönetim aracı. (Giriş: `admin` / `admin`) |
 
 ### İş Servisleri (Business Services)
 | Servis Adı | Port | Görevi |
