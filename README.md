@@ -40,6 +40,11 @@ Sistemimiz bağımsız olarak ölçeklenebilen, iş ve altyapı sorumlulukların
 | **Config Server** | `8888` | Mikroservislerin yapılandırma (konfigürasyon) dosyalarını Git üzerinden merkezi olarak yöneten ve dağıtan servis. |
 | **Identity Service** | `9001` | Keycloak entegrasyonu ile merkezi kimlik doğrulama, yetkilendirme (Auth) ve JWT token yönetimi servisi. |
 
+### Geliştirici Araçları (Developer Tools)
+| Servis Adı | Port | Görevi |
+| :--- | :---: | :--- |
+| **pgAdmin** | `5050` | Veritabanlarını tarayıcı üzerinden (UI) yönetmek ve sorgulamak için kullanılan yönetim aracı. (Giriş: `admin@teleco.com` / `admin123`) |
+
 ### İş Servisleri (Business Services)
 | Servis Adı | Port | Görevi |
 | :--- | :---: | :--- |
