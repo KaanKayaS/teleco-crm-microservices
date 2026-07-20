@@ -1,4 +1,4 @@
-﻿#!/usr/bin/env bash
+#!/usr/bin/env bash
 # ============================================================
 #  Teleco CRM Microservices - Full Stack Startup Script
 #  Mac / Linux (bash)
@@ -8,7 +8,7 @@
 
 set -euo pipefail
 
-ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")"  && pwd)"
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.."  && pwd)"
 MS_ROOT="${ROOT}/microservices"
 DOCKER_DIR="${ROOT}/docker-telcom"
 FRONTEND="${ROOT}/frontend"

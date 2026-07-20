@@ -1,4 +1,4 @@
-﻿#Requires -Version 5.1
+#Requires -Version 5.1
 # ============================================================
 #  Teleco CRM Microservices - Full Stack Startup Script
 #  Windows PowerShell
@@ -7,7 +7,7 @@
 # ============================================================
 
 $ErrorActionPreference = "Continue"
-$ROOT       = $PSScriptRoot
+$ROOT       = (Get-Item $PSScriptRoot).Parent.FullName
 $MS_ROOT    = Join-Path $ROOT "microservices"
 $DOCKER_DIR = Join-Path $ROOT "docker-telcom"
 $FRONTEND   = Join-Path $ROOT "frontend"
@@ -33,12 +33,12 @@ function Log-Step  {
 function Invoke-Cleanup {
     Write-Host "`n`n  Kapatma sinyali alindi. Tum servisler durduruluyor..." -ForegroundColor Magenta
 
-    foreach ($pid in $script:javaPids) {
+    foreach ($javaPid in $script:javaPids) {
         try {
-            $proc = Get-Process -Id $pid -ErrorAction SilentlyContinue
+            $proc = Get-Process -Id $javaPid -ErrorAction SilentlyContinue
             if ($proc) {
-                Log-Warn "Process durduruluyor: PID $pid ($($proc.ProcessName))"
-                Stop-Process -Id $pid -Force -ErrorAction SilentlyContinue
+                Log-Warn "Process durduruluyor: PID $javaPid ($($proc.ProcessName))"
+                Stop-Process -Id $javaPid -Force -ErrorAction SilentlyContinue
             }
         } catch {}
     }
@@ -228,29 +228,73 @@ if (Get-Command minikube -ErrorAction SilentlyContinue) {
             $k8sReady = $true
             Log-OK "Minikube hazir"
         } else {
-            Log-Warn "Minikube baslanamadi — K8s adimi atlaniyor, diger servisler devam ediyor."
+            Log-Warn "Minikube baslanamadi - K8s adimi atlaniyor, diger servisler devam ediyor."
             Log-Warn "Manuel duzeltme icin: minikube delete ; minikube start --driver=docker"
         }
     }
 
     if ($k8sReady) {
-        Log-Info "K8s manifest'leri uygulanıyor: $K8S_DIR"
-        kubectl apply -f "$K8S_DIR" 2>&1 | ForEach-Object { Log-Info $_ }
+        # ── Docker image build + minikube yükleme ───────────────────────────
+        $customerSvcDir = Join-Path $MS_ROOT "customer-service"
+        $imageTag        = "telecom-crm/customer-service:latest"
+        $rebuildFlag     = $args -contains "--rebuild"
 
-        Log-Info "customer-service pod Ready bekliyor (maks 3 dk)..."
-        $waitResult = kubectl wait pod `
-            --for=condition=ready `
-            --selector=app=customer-service `
-            --namespace=telecom-crm `
-            --timeout=180s 2>&1
-        if ($LASTEXITCODE -eq 0) {
-            Log-OK "customer-service K8s pod hazir"
+        # Image minikube içinde mevcut mu kontrol et
+        $imageInMk = minikube image ls 2>$null | Select-String $imageTag
+
+        if (-not $imageInMk -or $rebuildFlag) {
+            Log-Step "2b/5  customer-service Docker image build + minikube load"
+
+            Log-Info "Docker image build ediliyor: $imageTag  (bu ~3-5 dk surebilir)..."
+            docker build -t $imageTag "$customerSvcDir" 2>&1 | ForEach-Object {
+                if ($_ -match "error|ERRO" -and $_ -notmatch "WARNING") { Log-Error $_ }
+                elseif ($_ -match "Step |\-\-\->|Successfully")          { Log-Info  $_ }
+            }
+            $buildOk = ($LASTEXITCODE -eq 0)
+            if (-not $buildOk) {
+                Log-Error "Docker build basarisiz - customer-service K8s adimi atlaniyor."
+            } else {
+                Log-OK "Docker image hazir: $imageTag"
+                Log-Info "Image minikube'a yukleniyor (bu 1-3 dk surebilir)..."
+                minikube image load $imageTag 2>&1 | ForEach-Object { Log-Info $_ }
+                Log-OK "Image minikube'a yuklendi"
+            }
         } else {
-            Log-Warn "customer-service pod hazir olmadi (kubectl wait: $waitResult) — devam ediliyor"
+            $buildOk = $true
+            Log-OK "Image minikube'da mevcut, build atlaniyor. (Yeniden build icin: .\start-all.ps1 --rebuild)"
+        }
+
+        if ($buildOk) {
+            # ── K8s manifest'lerini uygula ───────────────────────────────────────
+            Log-Info "K8s manifest'leri uygulanıyor: $K8S_DIR"
+            kubectl apply -f "$K8S_DIR" 2>&1 | ForEach-Object { Log-Info $_ }
+
+            Log-Info "customer-service pod Ready bekliyor (maks 3 dk)..."
+            $waitResult = kubectl wait pod `
+                --for=condition=ready `
+                --selector=app.kubernetes.io/name=customer-service `
+                --namespace=telecom-crm `
+                --timeout=180s 2>&1
+            if ($LASTEXITCODE -eq 0) {
+                Log-OK "customer-service K8s pod hazir"
+            } else {
+                Log-Warn "customer-service pod hazir olmadi (kubectl wait: $waitResult) - devam ediliyor"
+            }
+
+            # ── port-forward: localhost:8081 → customer-service:8081 ─────────────
+            Log-Info "customer-service port-forward baslatiliyor (localhost:8081)..."
+            $pfJob = Start-Job -ScriptBlock {
+                while ($true) {
+                    kubectl port-forward service/customer-service 8081:8081 -n telecom-crm 2>&1
+                    Start-Sleep -Seconds 3   # bağlantı kopunca kısa bekleyip yeniden dene
+                }
+            }
+            $script:javaPids.Add($pfJob.Id)   # Ctrl+C ile cleanup sırasında job da durdurulsun
+            Log-OK "customer-service Swagger: http://localhost:8081/swagger-ui/index.html"
         }
     }
 } else {
-    Log-Warn "minikube bulunamadi — K8s adimi atlandi"
+    Log-Warn "minikube bulunamadi - K8s adimi atlandi"
 }
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -297,7 +341,7 @@ Write-Host "  Log dosyalari: $LOG_DIR" -ForegroundColor DarkCyan
 # ─────────────────────────────────────────────────────────────────────────────
 # ADIM 5 — Angular Frontend (on planda)
 # ─────────────────────────────────────────────────────────────────────────────
-Log-Step "5/5  Angular Frontend  (on planda — Ctrl+C ile her sey kapanir)"
+Log-Step "5/5  Angular Frontend  (on planda - Ctrl+C ile her sey kapanir)"
 
 if (-not (Test-Path $FRONTEND)) {
     Log-Error "Frontend dizini bulunamadi: $FRONTEND"
